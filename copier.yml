@@ -1,0 +1,133 @@
+_subdirectory: template
+_templates_suffix: ".jinja"
+_min_copier_version: "9.0.0"
+
+_envops:
+  keep_trailing_newline: true
+
+_tasks:
+  - "git init" 
+  - "echo 'Template generated. Next: cd {{ project_slug }} && uv sync && cp .env.example .env'"
+
+_message_after_copy: |
+  Project "{{ project_name }}" generated successfully.
+
+  Next steps:
+    cd {{ project_slug }}
+    cp .env.example .env
+    uv sync
+    uv run python manage.py migrate
+    uv run python manage.py runserver
+
+# ---------------------------------------------------------------------------
+# Project metadata
+# ---------------------------------------------------------------------------
+project_name:
+  type: str
+  help: "Human-readable project name"
+  default: "My Django Project"
+
+project_slug:
+  type: str
+  help: "Project slug (used as directory name and Python-safe identifier)"
+  default: "{{ project_name | lower | replace(' ', '_') | replace('-', '_') }}"
+  validator: >-
+    {% if not (project_slug | regex_search('^[a-z][a-z0-9_]*$')) %}
+    project_slug must be lowercase, start with a letter, and contain only letters, digits, and underscores.
+    {% endif %}
+
+description:
+  type: str
+  help: "Short project description"
+  default: ""
+
+author_name:
+  type: str
+  help: "Author full name"
+  default: "Your Name"
+
+author_email:
+  type: str
+  help: "Author email"
+  default: "you@example.com"
+
+python_version:
+  type: str
+  help: "Python version"
+  choices:
+    - "3.11"
+    - "3.12"
+    - "3.13"
+  default: "3.12"
+
+# ---------------------------------------------------------------------------
+# Core framework toggles
+# ---------------------------------------------------------------------------
+use_drf:
+  type: bool
+  help: "Include Django REST Framework?"
+  default: true
+
+use_simplejwt:
+  type: bool
+  help: "Include SimpleJWT authentication endpoints? (requires DRF)"
+  # Default mirrors use_drf: when the question is hidden (use_drf=false),
+  # the answer must collapse to false too, not silently stay true.
+  default: "{{ use_drf }}"
+  when: "{{ use_drf }}"
+
+use_openapi:
+  type: bool
+  help: "Include OpenAPI schema + Swagger/Redoc UI via drf-spectacular? (requires DRF)"
+  default: "{{ use_drf }}"
+  when: "{{ use_drf }}"
+
+# ---------------------------------------------------------------------------
+# Infrastructure components
+# ---------------------------------------------------------------------------
+database:
+  type: str
+  help: "Database backend"
+  choices:
+    - postgresql
+    - mysql
+    - sqlite
+  default: postgresql
+
+use_dotenv:
+  type: bool
+  help: "Load environment variables from a .env file at startup (django-environ)?"
+  default: true
+
+use_docker:
+  type: bool
+  help: "Include Dockerfile + docker-compose setup?"
+  default: true
+
+use_celery:
+  type: bool
+  help: "Include Celery + Redis for async tasks?"
+  default: false
+
+# ---------------------------------------------------------------------------
+# Quality / release tooling
+# ---------------------------------------------------------------------------
+use_tests:
+  type: bool
+  help: "Include pytest + pytest-django test setup?"
+  default: true
+
+use_ci:
+  type: bool
+  help: "Include GitHub Actions CI workflow (lint + test)?"
+  default: true
+
+use_semantic_release:
+  type: bool
+  help: "Include python-semantic-release configuration + release workflow?"
+  default: true
+
+use_pre_commit:
+  type: bool
+  help: "Include a pre-commit config (ruff lint + format)?"
+  default: true

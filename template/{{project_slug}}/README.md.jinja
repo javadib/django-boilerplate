@@ -1,0 +1,65 @@
+# {{ project_name }}
+
+{{ description }}
+
+## Stack
+
+- Django (Python {{ python_version }})
+- Database: {{ database }}
+{%- if use_drf %}
+- Django REST Framework
+{%- endif %}
+{%- if use_simplejwt %}
+- SimpleJWT authentication (`/api/token/`, `/api/token/refresh/`, `/api/token/verify/`)
+{%- endif %}
+{%- if use_openapi %}
+- OpenAPI schema + docs via drf-spectacular (`/api/schema/`, `/api/docs/`, `/api/redoc/`)
+{%- endif %}
+{%- if use_celery %}
+- Celery + Redis for async tasks
+{%- endif %}
+- Package management: [uv](https://docs.astral.sh/uv/)
+{%- if use_dotenv %}
+- `.env` file support (django-environ)
+{%- endif %}
+{%- if use_docker %}
+- Docker + docker-compose
+{%- endif %}
+{%- if use_tests %}
+- pytest + pytest-django
+{%- endif %}
+{%- if use_ci %}
+- GitHub Actions CI (lint + test)
+{%- endif %}
+{%- if use_semantic_release %}
+- python-semantic-release (conventional commits -> automatic versioning)
+{%- endif %}
+
+## Quickstart
+
+```bash
+cp .env.example .env
+uv sync
+uv run python manage.py migrate
+uv run python manage.py createsuperuser
+uv run python manage.py runserver
+```
+
+{%- if use_docker %}
+
+### With Docker
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+{%- endif %}
+
+{%- if use_tests %}
+
+## Tests
+
+```bash
+uv run pytest
+```
+{%- endif %}
