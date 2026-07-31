@@ -1,4 +1,4 @@
-{%- if use_drf %}
+{% if use_drf -%}
 import pytest
 from rest_framework.test import APIClient
 
@@ -6,6 +6,6 @@ from rest_framework.test import APIClient
 @pytest.fixture
 def api_client():
     return APIClient()
-{%- else %}
+{% else -%}
 # Add shared pytest fixtures here as your test suite grows.
 {%- endif %}
