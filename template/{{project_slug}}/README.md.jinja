@@ -23,7 +23,7 @@
 - `.env` file support (django-environ)
 {%- endif %}
 {%- if use_docker %}
-- Docker + docker-compose
+- Docker (multi-stage Dockerfile; `compose.yml` dev + `compose.prod.yml` prod)
 {%- endif %}
 {%- if use_tests %}
 - pytest + pytest-django
@@ -49,9 +49,18 @@ uv run python manage.py runserver
 
 ### With Docker
 
+Development (live-reload):
+
 ```bash
 cp .env.example .env
 docker compose up --build
+```
+
+Production (gunicorn, no live-reload):
+
+```bash
+cp .env.example .env
+docker compose -f compose.prod.yml up --build -d
 ```
 {%- endif %}
 

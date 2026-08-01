@@ -54,7 +54,7 @@ default-mirrors-parent pattern to every new dependent question.
 ## Conditional file/directory naming convention
 
 Copier renders the whole relative path as Jinja, so a file named
-`{% if use_docker %}docker-compose.yml{% endif %}.jinja` disappears
+`{% if use_docker %}compose.yml{% endif %}.jinja` disappears
 entirely (empty rendered name = skipped) when `use_docker` is false. Every
 optional file/dir in this template is gated this way — don't use `_exclude`
 or post-generation deletion tasks instead; stay consistent.
@@ -108,9 +108,17 @@ also run `migrate` and `pytest` for real — not just `check`.
   messages in this repo (and in generated projects that keep the toggle on)
   must follow `feat:` / `fix:` / `chore:` etc., since semantic-release
   parses them to pick the next version.
-- Docker: multi-stage, uv-based. Any service bind-mounting the project dir
-  (`.:/app`) for live-reload must also mount a named volume over
-  `/app/.venv` so the image-built virtualenv isn't shadowed.
+- Docker: multi-stage, uv-based, and build-only. The Dockerfile has a
+  `builder` stage (installs uv, syncs deps, including mysql build deps) and a
+  slim `final` stage that copies only the built venv and app code — no
+  compilers or dev headers in the final image layer. It never defines
+  DB/Redis services; those live in Compose. Compose is split dev/prod:
+  `compose.yml` (dev, bind-mounts `.:/app` for live-reload, runs
+  `manage.py runserver`) and `compose.prod.yml` (prod, builds the `final`
+  target, no bind mount, relies on the image's gunicorn `CMD`). Any service
+  bind-mounting the project dir (`.:/app`) for live-reload must also mount a
+  named volume over `/app/.venv` so the image-built virtualenv isn't
+  shadowed.
 - Language: all code, comments, and commit messages are in English,
   regardless of the language used to discuss the project.
 
