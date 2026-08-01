@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    command: uv run python manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
       # Named volume so the venv built inside the image isn't shadowed by
@@ -49,7 +49,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    command: uv run celery -A config worker -l info
+    command: celery -A config worker -l info
     volumes:
       - .:/app
       - venv_data:/app/.venv

@@ -101,7 +101,7 @@ use_dotenv:
 
 use_docker:
   type: bool
-  help: "Include Dockerfile + docker-compose setup?"
+  help: "Include Docker setup (multi-stage Dockerfile; compose.yml dev + compose.prod.yml prod)?"
   default: true
 
 use_celery:
