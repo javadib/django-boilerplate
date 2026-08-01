@@ -32,7 +32,7 @@
 - GitHub Actions CI (lint + test)
 {%- endif %}
 {%- if use_semantic_release %}
-- python-semantic-release (conventional commits -> automatic versioning)
+- python-semantic-release (conventional commits -> automatic versioning). Versioning starts at `0.0.0` and stays on the `0.x` line (via `major_on_zero`) until a maintainer deliberately promotes the project to `1.0.0`.
 {%- endif %}
 
 ## Quickstart
